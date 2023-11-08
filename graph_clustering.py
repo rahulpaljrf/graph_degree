@@ -29,7 +29,7 @@ from ts2vg import HorizontalVG
 def clustering_coeff_feat(image):
     clus_coef_nat = []
     clus_coef_hor = []
-    for i in range(64):
+    for i in range(N):
         series = image[i,:]
         nvg = NaturalVG()
         nvg.build(series)
@@ -48,7 +48,7 @@ def clustering_coeff_feat(image):
 
     cluscoef_1_nat = []
     cluscoef_1_hor = []
-    for i in range(64):
+    for i in range(N):
         series = image[:,i]
         nvg = NaturalVG()
         nvg.build(series)
@@ -69,15 +69,15 @@ def clustering_coeff_feat(image):
     cluscoef_201_nat = cluscoeff_nx_nat + cluscoef_1_nx_nat
     cluscoef_201_hor = cluscoeff_nx_hor + cluscoef_1_nx_hor
 
-    vgd_nat = np.zeros((64,64))
-    vgd_hor = np.zeros((64,64))
-    for i in range(-62,0,1):
+    vgd_nat = np.zeros((N,N))
+    vgd_hor = np.zeros((N,N))
+    for i in range(-(N-2),0,1):
         series = image[::-1,:].diagonal(i)
         vg = NaturalVG()
         vg.build(series)
         g = vg.as_networkx()
         clus_coefs = list(nx.clustering(g).values())
-        index1 = i+63
+        index1 = i+(N-1)
         row_index , col_index = np.array(np.arange(index1,-1,-1)), np.array(np.arange(0,index1+1,1))
         vgd_nat[row_index,col_index] = clus_coefs
         hvg = HorizontalVG()
@@ -87,58 +87,58 @@ def clustering_coeff_feat(image):
         row_index , col_index = np.array(np.arange(index1,-1,-1)), np.array(np.arange(0,index1+1,1))
         vgd_hor[row_index,col_index] = clus_coefs
 
-    for i in range(0,63,1):
+    for i in range(0,(N-1),1):
         series = image[::-1,:].diagonal(i)
         vg = NaturalVG()
         vg.build(series)
         g = vg.as_networkx()
         clus_coefs = list(nx.clustering(g).values())
         index1 = i
-        row_index , col_index = np.array(np.arange(index1,64,1)), np.array(np.arange(63,index1-1,-1))
+        row_index , col_index = np.array(np.arange(index1,N,1)), np.array(np.arange((N-1),index1-1,-1))
         vgd_nat[row_index,col_index] = clus_coefs
         hvg = HorizontalVG()
         hvg.build(series)
         g1 = hvg.as_networkx()
         clus_coefs = list(nx.clustering(g1).values())
         index1 = i
-        row_index , col_index = np.array(np.arange(index1,64,1)), np.array(np.arange(63,index1-1,-1))
+        row_index , col_index = np.array(np.arange(index1,N,1)), np.array(np.arange((N-1),index1-1,-1))
         vgd_hor[row_index,col_index] = clus_coefs
 
-    vgd_1_nat = np.zeros((64,64))
-    vgd_1_hor = np.zeros((64,64))
-    for i in range(62,0,-1):
+    vgd_1_nat = np.zeros((N,N))
+    vgd_1_hor = np.zeros((N,N))
+    for i in range((N-2),0,-1):
         series = image.diagonal(i)
         vg = NaturalVG()
         vg.build(series)
         g = vg.as_networkx()
         clus_coefs = list(nx.clustering(g).values())
-        index1 = -i + 64
-        row_index , col_index = np.array(np.arange(0,index1,1)), np.array(np.arange(i,64,1))
+        index1 = -i + N
+        row_index , col_index = np.array(np.arange(0,index1,1)), np.array(np.arange(i,N,1))
         vgd_1_nat[row_index,col_index] = clus_coefs
         hvg = HorizontalVG()
         hvg.build(series)
         g1 = hvg.as_networkx()
         clus_coefs = list(nx.clustering(g1).values())
-        index1 = -i + 64
-        row_index , col_index = np.array(np.arange(0,index1,1)), np.array(np.arange(i,64,1))
+        index1 = -i + N
+        row_index , col_index = np.array(np.arange(0,index1,1)), np.array(np.arange(i,N,1))
         vgd_1_hor[row_index,col_index] = clus_coefs
 
-    for i in range(0,-63,-1):
+    for i in range(0,-(N-1),-1):
         series = image.diagonal(i)
         vg = NaturalVG()
         vg.build(series)
         g = vg.as_networkx()
         g = visibility_graph(series)
         clus_coefs = list(nx.clustering(g).values())
-        index1 = i + 64
-        row_index , col_index = np.array(np.arange(-i,64,1)), np.array(np.arange(0,index1,1))
+        index1 = i + N
+        row_index , col_index = np.array(np.arange(-i,N,1)), np.array(np.arange(0,index1,1))
         vgd_1_nat[row_index,col_index] = clus_coefs
         hvg = HorizontalVG()
         hvg.build(series)
         g1 = hvg.as_networkx()
         clus_coefs = list(nx.clustering(g1).values())
-        index1 = i + 64
-        row_index , col_index = np.array(np.arange(-i,64,1)), np.array(np.arange(0,index1,1))
+        index1 = i + N
+        row_index , col_index = np.array(np.arange(-i,N,1)), np.array(np.arange(0,index1,1))
         vgd_1_hor[row_index,col_index] = clus_coefs
 
     feature_mat_nat = cluscoef_201_nat + vgd_nat + vgd_1_nat
